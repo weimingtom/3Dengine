@@ -8,6 +8,9 @@ import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.lang.Object;
+import javax.media.j3d.Texture;
+
 
 
 public class Environment {
@@ -48,7 +51,7 @@ public class Environment {
     }
 
     public void render(Graphics2D graphics){
-        graphics.setColor(Color.DARK_GRAY);
+        graphics.setColor(new Color(165,0,205));
         graphics.fillRect(0, 0, WIDTH, WIDTH);
         graphics.setColor(Color.WHITE);
         
@@ -92,7 +95,7 @@ public class Environment {
         }
 
         // Draw the outlines of the triangles
-        graphics.setColor(Color.black);
+        graphics.setColor(Color.green);
         for(int i = 0; i < 3; i++)
             graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
         
