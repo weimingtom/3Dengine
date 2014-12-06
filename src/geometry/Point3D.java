@@ -40,4 +40,8 @@ public class Point3D {
    public boolean equals(Point3D p){
 	   return x == p.x && y == p.y && z == p.z;
    }
+   
+   public Point3D translate(double tx, double ty, double tz){
+	   return add(new Point3D(tx, ty, tz));
+   }
 }
