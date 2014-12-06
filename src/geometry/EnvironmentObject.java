@@ -1,9 +1,7 @@
 package geometry;
 
-import java.awt.geom.Point2D;
-
 public class EnvironmentObject implements Comparable<EnvironmentObject>{
-	private DSArrayList<Triangle3D> triangles;
+	protected DSArrayList<Triangle3D> triangles;
 	public  Point3D center;
 	public  Point3D velocity;
 	public static Point3D cameraPos; // For use with our compareTo method
@@ -58,6 +56,14 @@ public class EnvironmentObject implements Comparable<EnvironmentObject>{
 	}
 
 	@Override
+	/**
+	 * Compares this EnvironmentObject's distance to the camera with another one's distance.
+	 * 
+	 * @param o  The other EnvironmentObject
+	 * 
+	 * This method is included so that we can ask the Collections class to sort
+	 * our EnvironmentObjects by distance from the camera.
+	 */
 	public int compareTo(EnvironmentObject o) {
 		Double myDist = (center.x - cameraPos.x)*(center.x - cameraPos.x) +
 				(center.y - cameraPos.y)*(center.y - cameraPos.y) +

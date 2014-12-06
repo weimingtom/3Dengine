@@ -8,8 +8,6 @@ import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.lang.Object;
-import javax.media.j3d.Texture;
 
 
 
@@ -17,7 +15,7 @@ public class Environment {
     int WIDTH = 800;
     int HEIGHT = 600;
     DSArrayList<Point2D.Double> points;
-    DSArrayList<Triangle3D> triangles;
+    ArrayList<Triangle3D> triangles;
     ArrayList<EnvironmentObject> objects;
     double[][] transform = {{1,0,0,0},{0,1,0,0},{0,0,1,0}, {0, 0, 0, 1}};
     Graphics2D graphics;                 // The rendering context
@@ -27,7 +25,12 @@ public class Environment {
     double[][] rightRotationMatrix;
     double[][] moveForwardMatrix;
     double[][] moveBackwardMatrix;
-
+    /**
+     * kind of working.....
+     * if the light source is outside the frame it works. aaaaaad
+     * if he light source is directly above the center, half lights up and half is dark....
+     */
+    Point3D tempLightSource = new Point3D(1,1,1);
     // Locations of the view frustrum planes
     double near = 1;
     double left = -1;
@@ -41,7 +44,7 @@ public class Environment {
     double   angleStep = 0.05;
 
     public Environment(){
-        triangles = new DSArrayList<Triangle3D>();
+        triangles = new ArrayList<Triangle3D>();
         objects = new ArrayList<EnvironmentObject>();
         points = new DSArrayList<Point2D.Double>();
         leftRotationMatrix = makeLRRotation(-angleStep);
@@ -51,17 +54,19 @@ public class Environment {
     }
 
     public void render(Graphics2D graphics){
-        graphics.setColor(new Color(165,0,205));
+        graphics.setColor(Color.DARK_GRAY);
         graphics.fillRect(0, 0, WIDTH, WIDTH);
         graphics.setColor(Color.WHITE);
         
         // Render the triangles
+        Triangle3D.cameraPos = new Point3D(cameraPos[0], cameraPos[1], cameraPos[2]);
+        Collections.sort(triangles);
         for(int i = 0; i < triangles.size(); i++)
             if(triangleIsVisible(triangles.get(i)) && triangleIsFacingCamera(triangles.get(i)))
                 renderTriangle(triangles.get(i), graphics);
         
         // Render the EnvironmentObjects
-        EnvironmentObject.cameraPos = new Point3D(cameraPos[0], cameraPos[1], 0);
+        EnvironmentObject.cameraPos = new Point3D(cameraPos[0], cameraPos[1], cameraPos[2]);
         Collections.sort(objects);
         for(int i = 0; i < objects.size(); i++)
             renderObject(objects.get(i), graphics);
@@ -78,7 +83,7 @@ public class Environment {
     
     private boolean triangleIsFacingCamera(Triangle3D t){
         return sigmaVal(t.points[0], t.points[1], t.points[2],
-                new Point3D(cameraPos[0], cameraPos[1], 0)) > 0;
+                new Point3D(cameraPos[0], cameraPos[1], cameraPos[2])) > 0;
                 
     }
 
@@ -95,12 +100,26 @@ public class Environment {
         }
 
         // Draw the outlines of the triangles
-        graphics.setColor(Color.green);
-        for(int i = 0; i < 3; i++)
-            graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
+//        graphics.setColor(Color.black);
+//        for(int i = 0; i < 3; i++)
+//            graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
         
         // Draw the interiors of the triangles
-        graphics.setColor(new Color(140, 180, 220, 200));
+        double shade = shadeTriangle(tempLightSource,t);
+        // applies a shade to the current triangle based on the angle of the vectors. 
+        // maybe call the color a different way to get a larger variety of colors, instead of 255.
+        if(shade<=1&&shade>=0){
+        	
+        	Color C = Color.getHSBColor((float)(.47*shade), (float)(.75*shade),(float)(.9*shade));
+       
+        	graphics.setColor(C);
+        }
+        else{  
+        shade=0.1;
+       
+        Color C = Color.getHSBColor((float)(.47*.1), (float)(.75*.1),(float)(.9*.1));
+        graphics.setColor(C);
+        }
         Path2D.Double p = new Path2D.Double();
         p.moveTo(x[0], y[0]);
         p.lineTo(x[1], y[1]);
@@ -108,7 +127,56 @@ public class Environment {
         p.closePath();
         graphics.fill(p);
     }
+    
+    private double shadeTriangle(Point3D lightSource, Triangle3D face){
+    	/* need a vector from light to center of the face of the object
+    	 * need normal vector from surface
+    	 * normalize the vectors
+    	 * then
+    	 * cos(theta) = N dot L   theta will be between 0 and 1
+    	 * 
+    	 */
+   
+    	Point3D p0 = face.points[0];
+    	Point3D p1 = face.points[1];
+    	Point3D p2 = face.points[2];
+    	double x = (p0.x+p1.x+p2.x)/3;
+    	double y = (p0.y+p1.y+p2.y)/3;
+    	double z = (p0.z+p1.z+p2.z)/3;
+    	Point3D centerFace = new Point3D(x,y,z);
+    	
+    	// the light vector, vector from triangle to light source, so norm and lv are in the same direction
+    	Point3D lv = new Point3D(lightSource.x-centerFace.x,lightSource.y-centerFace.y,lightSource.z-centerFace.z);
+    	Point3D sideA = new Point3D(p0.x-p1.x,p0.y-p1.y,p0.z-p1.z);
+    	Point3D sideB = new Point3D(p0.x-p2.x,p0.y-p2.y,p0.z-p2.z);
+    	Point3D norm = vectorCross(sideA,sideB);
+    	norm = normalizeVect(norm);
+    	lv = normalizeVect(lv);
+    	
+    	double cosTheta = dotProduct(lv,norm);
+    	return cosTheta;
+    	
+    	
+    	
+    	
+    }
 
+    private Point3D vectorCross(Point3D A, Point3D B){
+    	double z = A.x*B.y-A.y*B.x;
+    	double x = A.y*B.z-A.z*B.y;
+    	double y = A.z*B.x-A.x*B.z;
+    	Point3D norm = new Point3D(x,y,z);
+    	return norm;
+    }
+    private Point3D normalizeVect(Point3D v){
+    	double mag = Math.sqrt(v.x*v.x+v.y*v.y+v.z*v.z);
+    	Point3D rv = new Point3D(v.x/mag,v.y/mag,v.z/mag);
+    	return rv;
+    }
+    private double dotProduct(Point3D a,Point3D b){
+    	double rv = a.x*b.x+a.y*b.y+a.z*b.z;
+    	return rv;
+    }
     private void renderObject(EnvironmentObject o, Graphics2D graphics){
         DSArrayList<Triangle3D> objectTriangles = o.getTriangles();
         for(int ti = 0; ti < objectTriangles.size(); ti++)
@@ -147,7 +215,8 @@ public class Environment {
     }
 
     public void moveBackward(){
-        double[] cp = {cameraPos[0] + Math.sin(cameraAngle), cameraPos[1] - Math.cos(cameraAngle), 0, 0};
+        double[] cp = {cameraPos[0] + Math.sin(cameraAngle), cameraPos[1] - Math.cos(cameraAngle), 
+        		cameraPos[2], 0};
         cameraPos = cp;
         //System.out.printf("Camera pos: (%.2f, %.2f, %.2f) ", cameraPos[0], cameraPos[1], cameraPos[2]);
         //System.out.printf("%.2f  ", cameraAngle * 180 / Math.PI);
@@ -156,7 +225,8 @@ public class Environment {
     }
 
     public void moveForward(){
-        double[] cp = {cameraPos[0] - Math.sin(cameraAngle), cameraPos[1] + Math.cos(cameraAngle), 0, 0};
+        double[] cp = {cameraPos[0] - Math.sin(cameraAngle), cameraPos[1] + Math.cos(cameraAngle), 
+        		cameraPos[2], 0};
         cameraPos = cp;
         updateTransform();
     }
@@ -167,6 +237,16 @@ public class Environment {
     
     public void nearFarther(){
         near += 0.1;
+    }
+    
+    public void moveUp(){
+    	cameraPos[2] += 0.5;
+        updateTransform();
+    }
+    
+    public void moveDown(){
+    	cameraPos[2] -= 0.5;
+        updateTransform();
     }
     
     private void updateTransform(){

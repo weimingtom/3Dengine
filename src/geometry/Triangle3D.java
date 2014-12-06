@@ -10,9 +10,10 @@ import java.awt.Polygon;
  * if it has an outside, and an object.
  */
 
-public class Triangle3D {
+public class Triangle3D implements Comparable<Triangle3D>{
 	Point3D[] points;		// Vertices of the triangle
 	Triangle3D[] triangles; // Neighbor triangles. triangles[0] is on edge 0-1.
+	public static Point3D cameraPos; // for use with our compareTo method
 	
 	/**
 	 * Constructor
@@ -47,5 +48,16 @@ public class Triangle3D {
 	
 	public boolean hasVertex(Point3D p){
 		return points[0].equals(p) || points[1].equals(p) || points[2].equals(p);
+	}
+
+	@Override
+	public int compareTo(Triangle3D o) {
+		Double myDist = (points[0].x - cameraPos.x)*(points[0].x - cameraPos.x) +
+				(points[0].y - cameraPos.y)*(points[0].y - cameraPos.y) +
+				(points[0].z - cameraPos.z)*(points[0].z - cameraPos.z);
+		Double otherDist = (o.points[0].x - cameraPos.x)*(o.points[0].x - cameraPos.x) +
+				(o.points[0].y - cameraPos.y)*(o.points[0].y - cameraPos.y) +
+				(o.points[0].z - cameraPos.z)*(o.points[0].z - cameraPos.z);
+		return otherDist.compareTo(myDist);
 	}
 }
