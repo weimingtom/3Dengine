@@ -16,6 +16,7 @@ import javax.swing.Timer;
 
 
 public class Arena extends JPanel implements KeyListener {
+	boolean paused = false;
 	static Arena arena;
 	Environment e;
 	Timer timer;
@@ -31,7 +32,7 @@ public class Arena extends JPanel implements KeyListener {
 		arena.keysDown = new HashSet<Character>();
 		arena.setPreferredSize(new Dimension(e.WIDTH, e.HEIGHT));
 		arena.rh = new RenderingHints(null);
-		arena.rh.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		//arena.rh.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		// Set up a JFrame to hold our arena (Jpanel)
 		JFrame arenaFrame = new JFrame();
@@ -50,7 +51,6 @@ public class Arena extends JPanel implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent ke) {
 		keysDown.add(ke.getKeyChar());
-		System.out.println(ke.getKeyChar()+","+ke.getKeyCode());
 	}
 
 	@Override
@@ -138,12 +138,17 @@ public class Arena extends JPanel implements KeyListener {
 				e.teleport();
 			if(keysDown.contains('T'))
 				e.teleport();
+			if(keysDown.contains('p'))
+				paused = !paused;
 			moveEnvironmentObjects();
 			repaint();
 		}
 	};
 
 	private void moveEnvironmentObjects(){
+		if(paused){
+			return;
+		}
 		double factor = 200;
 		int k = 3;
 		for(int i = 0; i < e.objects.size(); i++){
@@ -170,11 +175,11 @@ public class Arena extends JPanel implements KeyListener {
 				e.addTriangle(new Triangle3D(
 						new Point3D(i*factor, j*factor, -10),
 						new Point3D((i+1)*factor, j*factor, -10),
-						new Point3D((i+1)*factor, (j+1)*factor, -10)));
+						new Point3D((i+1)*factor, (j+1)*factor, -10), false));
 				e.addTriangle(new Triangle3D(
 						new Point3D(i*factor, j*factor, -10),
 						new Point3D((i+1)*factor, (j+1)*factor, -10),
-						new Point3D(i*factor, (j+1)*factor, -10)));
+						new Point3D(i*factor, (j+1)*factor, -10), false));
 			}
 		}
 

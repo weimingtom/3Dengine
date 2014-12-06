@@ -1,6 +1,12 @@
 package geometry;
 
 import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 
 
 /**
@@ -10,7 +16,8 @@ import java.awt.Polygon;
  * if it has an outside, and an object.
  */
 
-public class Triangle3D implements Comparable<Triangle3D>{
+public class Triangle3D implements Shape, Comparable<Triangle3D>{
+	boolean inCube;
 	Point3D[] points;		// Vertices of the triangle
 	Triangle3D[] triangles; // Neighbor triangles. triangles[0] is on edge 0-1.
 	public static Point3D cameraPos; // for use with our compareTo method
@@ -27,6 +34,14 @@ public class Triangle3D implements Comparable<Triangle3D>{
 		points[0] = p0;
 		points[1] = p1;
 		points[2] = p2;
+	}
+	
+	public Triangle3D(Point3D p0, Point3D p1, Point3D p2, boolean ic){
+		points = new Point3D[3];
+		points[0] = p0;
+		points[1] = p1;
+		points[2] = p2;
+		inCube = ic;
 	}
 	
 	/**
@@ -59,5 +74,65 @@ public class Triangle3D implements Comparable<Triangle3D>{
 				(o.points[0].y - cameraPos.y)*(o.points[0].y - cameraPos.y) +
 				(o.points[0].z - cameraPos.z)*(o.points[0].z - cameraPos.z);
 		return otherDist.compareTo(myDist);
+	}
+
+	@Override
+	public boolean contains(Point2D arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean contains(Rectangle2D arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean contains(double arg0, double arg1) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean contains(double arg0, double arg1, double arg2, double arg3) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Rectangle2D getBounds2D() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PathIterator getPathIterator(AffineTransform arg0) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PathIterator getPathIterator(AffineTransform arg0, double arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean intersects(Rectangle2D arg0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean intersects(double arg0, double arg1, double arg2, double arg3) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
