@@ -50,6 +50,7 @@ public class Arena extends JPanel implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent ke) {
 		keysDown.add(ke.getKeyChar());
+		System.out.println(ke.getKeyChar()+","+ke.getKeyCode());
 	}
 
 	@Override
@@ -73,7 +74,7 @@ public class Arena extends JPanel implements KeyListener {
 	/**
 	 * In the main() method we started a Timer to go off so many times per second.
 	 * This runLoop method is called every time the timer goes off.
-	 * It inspects the HashSet of keys that are currenlty pressed, and for each
+	 * It inspects the HashSet of keys that are currently pressed, and for each
 	 * that is currently pressed, performs some appropriate action.
 	 */
 	ActionListener runLoop = new ActionListener() {
@@ -81,20 +82,62 @@ public class Arena extends JPanel implements KeyListener {
 		public void actionPerformed(ActionEvent arg0) {
 			if(keysDown.contains('d'))
 				e.rotateRight();
+			if(keysDown.contains('D'))
+				e.rotateRight();
 			if(keysDown.contains('a'))
+				e.rotateLeft();
+			if(keysDown.contains('A'))
 				e.rotateLeft();
 			if(keysDown.contains('s'))
 				e.moveBackward();
+			if(keysDown.contains('S'))
+				e.moveBackward();
 			if(keysDown.contains('w'))
+				e.moveForward();
+			if(keysDown.contains('W'))
 				e.moveForward();
 			if(keysDown.contains('j'))
 				e.moveDown();
+			if(keysDown.contains('J'))
+				e.moveDown();
 			if(keysDown.contains('l'))
+				e.moveUp();
+			if(keysDown.contains('L'))
 				e.moveUp();
 			if(keysDown.contains('['))
 				e.nearFarther();
 			if(keysDown.contains(']'))
 				e.nearCloser();
+			if(keysDown.contains('g'))
+				e.moveLightNorth();
+			if(keysDown.contains('G'))
+				e.moveLightNorth();
+			if(keysDown.contains('v'))
+				e.moveLightWest();
+			if(keysDown.contains('V'))
+				e.moveLightWest();
+			if(keysDown.contains('b'))
+				e.moveLightSouth();
+			if(keysDown.contains('B'))
+				e.moveLightSouth();
+			if(keysDown.contains('n'))
+				e.moveLightEast();
+			if(keysDown.contains('N'))
+				e.moveLightEast();
+			if(keysDown.contains('i'))
+				e.moveLightUp();
+			if(keysDown.contains('I'))
+				e.moveLightUp();
+			if(keysDown.contains('k'))
+				e.moveLightDown();
+			if(keysDown.contains('K'))
+				e.moveLightDown();
+			if(keysDown.contains(' '))
+				e.summonLight();
+			if(keysDown.contains('t'))
+				e.teleport();
+			if(keysDown.contains('T'))
+				e.teleport();
 			moveEnvironmentObjects();
 			repaint();
 		}

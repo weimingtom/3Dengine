@@ -30,7 +30,7 @@ public class Environment {
      * if the light source is outside the frame it works. aaaaaad
      * if he light source is directly above the center, half lights up and half is dark....
      */
-    Point3D tempLightSource = new Point3D(1,1,1);
+    Point3D lightSource = new Point3D(1,1,1);
     // Locations of the view frustrum planes
     double near = 1;
     double left = -1;
@@ -105,7 +105,7 @@ public class Environment {
 //            graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
         
         // Draw the interiors of the triangles
-        double shade = shadeTriangle(tempLightSource,t);
+        double shade = shadeTriangle(lightSource,t);
         // applies a shade to the current triangle based on the angle of the vectors. 
         // maybe call the color a different way to get a larger variety of colors, instead of 255.
         if(shade<=1&&shade>=0){
@@ -247,6 +247,43 @@ public class Environment {
     public void moveDown(){
     	cameraPos[2] -= 0.5;
         updateTransform();
+    }
+    public void moveLightNorth(){
+    	lightSource = lightSource.translate(0, 1, 0);
+    }
+    
+    public void moveLightSouth(){
+    	lightSource = lightSource.translate(0, -1, 0);
+    }
+    public void moveLightEast(){
+    	lightSource = lightSource.translate(1, 0, 0);
+    }
+    
+    public void moveLightWest(){
+    	lightSource = lightSource.translate(-1, 0, 0);
+    }
+    
+    public void moveLightUp(){
+    	lightSource = lightSource.translate(0, 0, 1);
+    }
+    
+    public void moveLightDown(){
+    	if(lightSource.z > 0)
+    		lightSource = lightSource.translate(0, 0, -1);
+    	else
+    		return;
+    }
+    
+    public void summonLight(){
+    	lightSource = new Point3D(cameraPos[0],cameraPos[1],cameraPos[2]);
+    }
+    
+    public void teleport(){
+    	cameraPos[0] = lightSource.x;
+    	cameraPos[1] = lightSource.y;
+    	cameraPos[2] = lightSource.z;
+    	updateTransform();
+    	
     }
     
     private void updateTransform(){
