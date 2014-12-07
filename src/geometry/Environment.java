@@ -135,9 +135,10 @@ public class Environment {
 		//            graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
 
 		// Draw the interiors of the triangles
-		if(t.inCube){
-			
-			graphics.setPaint(TEXTURE);
+		if(!t.onFloor){
+			TexturePaint texture = new TexturePaint(textureimg, 
+					new Rectangle((int)project(t.topleftpoint()).x, (int)project(t.topleftpoint()).y, 20,20));
+			graphics.setPaint(texture);
 			p.moveTo(x[0], y[0]);
 			p.lineTo(x[1], y[1]);
 			p.lineTo(x[2], y[2]);
@@ -194,10 +195,6 @@ public class Environment {
 
 		double cosTheta = dotProduct(lv,norm);
 		return cosTheta;
-
-
-
-
 	}
 
 	private Point3D vectorCross(Point3D A, Point3D B){
@@ -207,15 +204,18 @@ public class Environment {
 		Point3D norm = new Point3D(x,y,z);
 		return norm;
 	}
+	
 	private Point3D normalizeVect(Point3D v){
 		double mag = Math.sqrt(v.x*v.x+v.y*v.y+v.z*v.z);
 		Point3D rv = new Point3D(v.x/mag,v.y/mag,v.z/mag);
 		return rv;
 	}
+	
 	private double dotProduct(Point3D a,Point3D b){
 		double rv = a.x*b.x+a.y*b.y+a.z*b.z;
 		return rv;
 	}
+	
 	private void renderObject(EnvironmentObject o, Graphics2D graphics){
 		DSArrayList<Triangle3D> objectTriangles = o.getTriangles();
 		for(int ti = 0; ti < objectTriangles.size(); ti++)

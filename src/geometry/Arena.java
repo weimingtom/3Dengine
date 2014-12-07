@@ -175,11 +175,11 @@ public class Arena extends JPanel implements KeyListener {
 				e.addTriangle(new Triangle3D(
 						new Point3D(i*factor, j*factor, -10),
 						new Point3D((i+1)*factor, j*factor, -10),
-						new Point3D((i+1)*factor, (j+1)*factor, -10), false));
+						new Point3D((i+1)*factor, (j+1)*factor, -10), true));
 				e.addTriangle(new Triangle3D(
 						new Point3D(i*factor, j*factor, -10),
 						new Point3D((i+1)*factor, (j+1)*factor, -10),
-						new Point3D(i*factor, (j+1)*factor, -10), false));
+						new Point3D(i*factor, (j+1)*factor, -10), true));
 			}
 		}
 

@@ -157,4 +157,8 @@ public class Tools3D {
 		return b.x*c.y*d.z + b.y*c.z*d.x + b.z*c.x*d.y -
 				b.z*c.y*d.x - b.y*c.x*d.z - b.x*c.z*d.y;
 	}
+	
+	public static double dot(Point3D p, Point3D g){
+		return p.x*g.x+p.y*g.y+p.z*g.z;
+	}
 }

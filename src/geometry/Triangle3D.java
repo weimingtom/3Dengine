@@ -17,7 +17,7 @@ import java.awt.geom.Rectangle2D;
  */
 
 public class Triangle3D implements Shape, Comparable<Triangle3D>{
-	boolean inCube;
+	boolean onFloor;
 	Point3D[] points;		// Vertices of the triangle
 	Triangle3D[] triangles; // Neighbor triangles. triangles[0] is on edge 0-1.
 	public static Point3D cameraPos; // for use with our compareTo method
@@ -41,7 +41,22 @@ public class Triangle3D implements Shape, Comparable<Triangle3D>{
 		points[0] = p0;
 		points[1] = p1;
 		points[2] = p2;
-		inCube = ic;
+		onFloor = ic;
+	}
+	
+	public Point3D topleftpoint(){
+		Point3D one = new Point3D(points[1].x-points[0].x, points[1].y-points[0].y, points[1].z-points[0].z); //return points[0]
+		Point3D two = new Point3D(points[2].x-points[1].x, points[2].y-points[1].y, points[2].z-points[1].z); //return points[1]
+		Point3D three = new Point3D(points[0].x-points[2].x, points[0].y-points[2].y, points[0].z-points[2].z); //return points[2]
+		
+		if(Tools3D.dot(one,two) < .0001){
+			return points[0];
+		}
+		else if(Tools3D.dot(two, three) < .0001){
+			return points[1];
+		}
+		else
+			return points[2];
 	}
 	
 	/**
@@ -108,7 +123,6 @@ public class Triangle3D implements Shape, Comparable<Triangle3D>{
 
 	@Override
 	public Rectangle2D getBounds2D() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
