@@ -8,7 +8,9 @@ import java.awt.TexturePaint;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +42,14 @@ public class Environment {
 		}
 		return img;
 	}
+	
+	/*Color color = Color.cyan;
+	IndexColorModel colorModel = new IndexColorModel(1, 2,
+			new byte[]{0, (byte) color.getRed()},
+			new byte[]{0, (byte) color.getGreen()},
+			new byte[]{0, (byte) color.getBlue()},0);
+	BufferedImage textureimg = new BufferedImage(20, 20
+			, BufferedImage.TYPE_BYTE_INDEXED, colorModel);*/
 	BufferedImage textureimg = loadTheImage();
 	TexturePaint TEXTURE = new TexturePaint(textureimg, r);
 	GradientPaint gradient = new GradientPaint(10,10, Color.white, 50,50, Color.blue, true);
@@ -135,15 +145,26 @@ public class Environment {
 		//            graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
 
 		// Draw the interiors of the triangles
+		
 		if(!t.onFloor){
+			Point3D[] test = t.getHypotenuse();
+			Point3D midpoint = new Point3D(test[0].x/2+test[1].x/2, 
+					test[0].y/2+test[1].y/2, test[0].z/2+ test[1].z/2);
+			double a = midpoint.x-cameraPos[0];
+			double b = midpoint.y-cameraPos[1];
+			double c = midpoint.z-cameraPos[2];
+			double dist = 40*Math.sqrt((a*a) + (b*b) + (c*c));
+			double factor = dist/10; //factor to shrink/enlarge texture based on triangle's distance from camera.
 			TexturePaint texture = new TexturePaint(textureimg, 
-					new Rectangle((int)project(t.topleftpoint()).x, (int)project(t.topleftpoint()).y, 20,20));
+					new Rectangle2D.Double(x[0], y[0],
+							factor, factor));
 			graphics.setPaint(texture);
 			p.moveTo(x[0], y[0]);
 			p.lineTo(x[1], y[1]);
 			p.lineTo(x[2], y[2]);
 			p.closePath();
 			graphics.fill(p);
+			
 		} else{
 
 			double shade = shadeTriangle(lightSource,t);
@@ -307,7 +328,7 @@ public class Environment {
 	}
 
 	public void moveLightDown(){
-		if(lightSource.z > 0)
+		if(lightSource.z > -7)
 			lightSource = lightSource.translate(0, 0, -1);
 		else
 			return;

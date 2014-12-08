@@ -44,4 +44,11 @@ public class Point3D {
    public Point3D translate(double tx, double ty, double tz){
 	   return add(new Point3D(tx, ty, tz));
    }
+   
+   public double distance(Point3D p){
+	   double a = this.x-p.x;
+	   double b = this.y - p.y;
+	   double c = this.z - p.z;
+	   return Math.sqrt(a*a+b*b+c*c);
+   }
 }

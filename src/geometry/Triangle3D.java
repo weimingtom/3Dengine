@@ -80,6 +80,18 @@ public class Triangle3D implements Shape, Comparable<Triangle3D>{
 		return points[0].equals(p) || points[1].equals(p) || points[2].equals(p);
 	}
 
+	public Point3D[] getHypotenuse(){
+		Point3D[] longest;
+		Point3D a = this.points[0];
+		Point3D b = this.points[1];
+		Point3D c = this.points[2];
+		Point3D[] ab = {a,b};
+		Point3D[] ac = {a,c};
+		Point3D[] bc = {b,c};
+		longest = a.distance(b) > a.distance(c) ? ab : ac;
+		longest = longest[0].distance(longest[1]) > b.distance(c) ? longest : bc;
+		return longest;
+	}
 	@Override
 	public int compareTo(Triangle3D o) {
 		Double myDist = (points[0].x - cameraPos.x)*(points[0].x - cameraPos.x) +
