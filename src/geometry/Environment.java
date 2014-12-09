@@ -94,8 +94,20 @@ public class Environment {
 
 	public void render(Graphics2D graphics){
 		//testing gradient painting on background
+
+		
 		graphics.setPaint(gradient);
-		graphics.fillRect(0, 0, WIDTH, WIDTH);
+		graphics.fillRect(0, 0, WIDTH, HEIGHT);
+		
+		//transparency based on height of light source
+		float alpha = (float) ((lightSource.z+8)/10);
+		if(alpha>1.0)
+			alpha = 1F;
+		if(alpha<0)
+			alpha = 0F;
+		graphics.setPaint(new Color(0F,0F,0F,1-alpha));
+		graphics.fillRect(0, 0, WIDTH, HEIGHT);
+
 		graphics.setColor(Color.WHITE);
 
 		// Render the triangles
@@ -141,30 +153,40 @@ public class Environment {
 		}
 
 		// Draw the outlines of the triangles
-		graphics.setColor(Color.red);
-		for(int i = 0; i < 3; i++)
-			graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
+		//graphics.setColor(Color.red);
+		//for(int i = 0; i < 3; i++)
+			//graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
 
 		// Draw the interiors of the triangles
 
+		//get the shading from normalize vectors, create 2D shape for graphics to fill
 		float shade = shadeTriangle(lightSource,t);
+		p.moveTo(x[0], y[0]);
+		p.lineTo(x[1], y[1]);
+		p.lineTo(x[2], y[2]);
+		p.closePath();
 
+		//if light is below the plane, everything should be dark
+		if(lightSource.z<-8){
+			graphics.setPaint(Color.black);
+			graphics.fill(p);
+
+			return;
+		}
+		
+		Point3D[] test = t.getHypotenuse();
+		Point3D midpoint = new Point3D(test[0].x/2+test[1].x/2, 
+				test[0].y/2+test[1].y/2, test[0].z/2+ test[1].z/2);
+		double a = midpoint.x-cameraPos[0];
+		double b = midpoint.y-cameraPos[1];
+		double c = midpoint.z-cameraPos[2];
+		double dist = Math.sqrt((a*a)+(b*b)+(c*c));
+		double d = midpoint.x-lightSource.x;
+        double e = midpoint.y-lightSource.y;
+		double f = midpoint.z-lightSource.z;
+		
 		if(!t.onFloor){
-			Point3D[] test = t.getHypotenuse();
-			Point3D midpoint = new Point3D(test[0].x/2+test[1].x/2, 
-					test[0].y/2+test[1].y/2, test[0].z/2+ test[1].z/2);
-			double a = midpoint.x-cameraPos[0];
-			double b = midpoint.y-cameraPos[1];
-			double c = midpoint.z-cameraPos[2];
-			double dist = Math.sqrt((a*a)+(b*b)+(c*c));
-			Point3D tlc = t.topleftpoint();
-			Point3D l = test[0];
-			Point3D r = test[1];
 			double factor;
-			double rwi = l.distance(tlc)+r.distance(tlc);
-
-			double rhi = (pts[0].x - pts[1].x)*(pts[0].x - pts[1].x) + (pts[0].y-pts[1].y)*(pts[0].y-pts[1].y);
-			rhi = Math.sqrt(rhi);
 
 			if(dist<1)
 				factor = 1000;
@@ -173,25 +195,21 @@ public class Environment {
 			else
 				factor = 5000/Math.sqrt((a*a) + (b*b) + (c*c)); //factor to shrink/enlarge texture based on triangle's distance from camera.
 
-
 			TexturePaint texture;
-			System.out.println(rwi);
-
 			texture = new TexturePaint(textureimg,
 					new Rectangle2D.Double(x[0], y[0],
 							factor, factor));
-
 			graphics.setPaint(texture);
-			p.moveTo(x[0], y[0]);
-			p.lineTo(x[1], y[1]);
-			p.lineTo(x[2], y[2]);
-			p.closePath();
 			graphics.fill(p);
-
-			if(shade<=1&&shade>=0)
-				shade = shade;
-			else
-				shade=0.1F;
+			
+			float distshade = (float)(1/Math.sqrt((d*d)+(e*e)+(f*f)));			
+			if(shade>1 || shade<0)
+				shade = 0.1F;
+			float alpha = shade+distshade;
+			if(alpha<0)
+				alpha = 0;
+			if(alpha>1)
+				alpha = 1;
 			graphics.setPaint(new Color(0.F,0.F,0.F,1-shade));
 			graphics.fill(p);
 
@@ -213,12 +231,9 @@ public class Environment {
 			//int alpha = Math.abs((int)(255-factor)) > 255 ? 255 : Math.abs((int)(255-factor));
 			//Color C = new Color(0,0,0,alpha);
 			//graphics.setPaint(C);
-			p.moveTo(x[0], y[0]);
-			p.lineTo(x[1], y[1]);
-			p.lineTo(x[2], y[2]);
-			p.closePath();
 			graphics.fill(p);
 		}
+		
 	}
 
 	private float shadeTriangle(Point3D lightSource, Triangle3D face){
