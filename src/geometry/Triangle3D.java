@@ -49,10 +49,10 @@ public class Triangle3D implements Shape, Comparable<Triangle3D>{
 		Point3D two = new Point3D(points[2].x-points[1].x, points[2].y-points[1].y, points[2].z-points[1].z); //return points[1]
 		Point3D three = new Point3D(points[0].x-points[2].x, points[0].y-points[2].y, points[0].z-points[2].z); //return points[2]
 		
-		if(Tools3D.dot(one,two) < .0001){
+		if(Math.abs(Tools3D.dot(one,two)) < .0001){
 			return points[0];
 		}
-		else if(Tools3D.dot(two, three) < .0001){
+		else if(Math.abs(Tools3D.dot(two, three)) < .0001){
 			return points[1];
 		}
 		else
@@ -88,8 +88,9 @@ public class Triangle3D implements Shape, Comparable<Triangle3D>{
 		Point3D[] ab = {a,b};
 		Point3D[] ac = {a,c};
 		Point3D[] bc = {b,c};
-		longest = a.distance(b) > a.distance(c) ? ab : ac;
-		longest = longest[0].distance(longest[1]) > b.distance(c) ? longest : bc;
+		Point3D[] test;
+		test = a.distance(b) > a.distance(c) ? ab : ac;
+		longest = test[0].distance(test[1]) > b.distance(c) ? test : bc;
 		return longest;
 	}
 	@Override

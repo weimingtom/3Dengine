@@ -5,6 +5,7 @@ public class EnvironmentObject implements Comparable<EnvironmentObject>{
 	public  Point3D center;
 	public  Point3D velocity;
 	public static Point3D cameraPos; // For use with our compareTo method
+
 	
 	public EnvironmentObject(){
 		triangles = new DSArrayList<Triangle3D>();
@@ -21,7 +22,7 @@ public class EnvironmentObject implements Comparable<EnvironmentObject>{
 	
 	public static EnvironmentObject makeCube(double side){
 		EnvironmentObject eo = new EnvironmentObject();
-		double s = 0.0001;
+		double s = 0.10;
 		double r = side/2;
 		Point3D p1 = new Point3D(-r, -r, -r); //bottom left, back
 		Point3D p2 = new Point3D(r, -r, -r); //bottom left, front
@@ -54,18 +55,18 @@ public class EnvironmentObject implements Comparable<EnvironmentObject>{
 		eo.triangles.add(new Triangle3D(p4, p1, p5)); //back
 		eo.triangles.add(new Triangle3D(p4, p5, p8)); //back
 		
-		/*new Triangle3D(p11, p14, p13)
-		new Triangle3D(p11, p13, p12)
-		new Triangle3D(p11, p12, p16)
-		new Triangle3D(p11, p16, p15)
-		new Triangle3D(p12, p13, p17)
-		new Triangle3D(p12, p17, p16)
-		new Triangle3D(p18, p15, p16)
-		new Triangle3D(p18, p16, p17)
-		new Triangle3D(p18, p17, p13)
-		new Triangle3D(p18, p13, p14)
-		new Triangle3D(p14, p11, p15)
-		new Triangle3D(p14, p15, p18)*/
+		eo.triangles.add(new Triangle3D(p11, p14, p13, true));
+		eo.triangles.add(new Triangle3D(p11, p13, p12, true));
+		eo.triangles.add(new Triangle3D(p11, p12, p16, true));
+		eo.triangles.add(new Triangle3D(p11, p16, p15, true));
+		eo.triangles.add(new Triangle3D(p12, p13, p17, true));
+		eo.triangles.add(new Triangle3D(p12, p17, p16, true));
+		eo.triangles.add(new Triangle3D(p18, p15, p16, true));
+		eo.triangles.add(new Triangle3D(p18, p16, p17, true));
+		eo.triangles.add(new Triangle3D(p18, p17, p13, true));
+		eo.triangles.add(new Triangle3D(p18, p13, p14, true));
+		eo.triangles.add(new Triangle3D(p14, p11, p15, true));
+		eo.triangles.add(new Triangle3D(p14, p15, p18, true));
 		
 		return eo;
 	}

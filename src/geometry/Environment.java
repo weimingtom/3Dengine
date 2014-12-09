@@ -37,7 +37,7 @@ public class Environment {
 	public BufferedImage loadTheImage(){
 		BufferedImage img = null;
 		try{
-			img = ImageIO.read(new File("/home/kbeine/BlackAndWhite.jpg"));
+			img = ImageIO.read(new File("C:/Users/KatherineMJB/Pictures/blackandwhite.jpg"));
 		}catch(IOException e){
 			System.err.print("Did not load texture");
 		}
@@ -157,21 +157,26 @@ public class Environment {
 			double b = midpoint.y-cameraPos[1];
 			double c = midpoint.z-cameraPos[2];
 			double dist = Math.sqrt((a*a)+(b*b)+(c*c));
+			Point3D tlc = t.topleftpoint();
+			Point3D l = test[0];
+			Point3D r = test[1];
 			double factor;
+			double rwi = l.distance(tlc)+r.distance(tlc);
 			
-			if(dist<1)
+			/*if(dist<1)
 				factor = 1000;
 			//else if (dist> 1000)
 				//factor = 1;
 			else
 				factor = 5000/Math.sqrt((a*a) + (b*b) + (c*c)); //factor to shrink/enlarge texture based on triangle's distance from camera.
+			*/
 			
 			TexturePaint texture;
-			System.out.println(factor);
+			System.out.println(rwi);
 		
 			texture = new TexturePaint(textureimg,
 					new Rectangle2D.Double(x[0], y[0],
-							factor, factor));
+							10/rwi, 10/rwi));
 			
 			graphics.setPaint(texture);
 			p.moveTo(x[0], y[0]);
@@ -354,6 +359,10 @@ public class Environment {
 
 	public void summonLight(){
 		lightSource = new Point3D(cameraPos[0],cameraPos[1],cameraPos[2]);
+	}
+	
+	public void moveLight(Point3D pts){
+		lightSource = pts;
 	}
 
 	public void teleport(){

@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashSet;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,11 +18,13 @@ import javax.swing.Timer;
 
 public class Arena extends JPanel implements KeyListener {
 	boolean paused = false;
+	boolean suncycle = false;
 	static Arena arena;
 	Environment e;
 	Timer timer;
 	HashSet<Character>     keysDown;	// Holds the keys that are currently down.
 	RenderingHints rh;					// for drawing the graphics
+	int t; //an attempt at making the suncycle work
 
 	public static void main(String[] args) {
 		// Set up the arena and an environment
@@ -46,7 +49,9 @@ public class Arena extends JPanel implements KeyListener {
 		// Start the arena's run loop
 		arena.timer = new Timer(30, arena.runLoop);
 		arena.timer.start();
+
 	}
+	
 
 	@Override
 	public void keyPressed(KeyEvent ke) {
@@ -108,38 +113,114 @@ public class Arena extends JPanel implements KeyListener {
 				e.nearFarther();
 			if(keysDown.contains(']'))
 				e.nearCloser();
-			if(keysDown.contains('g'))
-				e.moveLightNorth();
-			if(keysDown.contains('G'))
-				e.moveLightNorth();
-			if(keysDown.contains('v'))
-				e.moveLightWest();
-			if(keysDown.contains('V'))
-				e.moveLightWest();
-			if(keysDown.contains('b'))
-				e.moveLightSouth();
-			if(keysDown.contains('B'))
-				e.moveLightSouth();
-			if(keysDown.contains('n'))
-				e.moveLightEast();
-			if(keysDown.contains('N'))
-				e.moveLightEast();
-			if(keysDown.contains('i'))
-				e.moveLightUp();
-			if(keysDown.contains('I'))
-				e.moveLightUp();
-			if(keysDown.contains('k'))
-				e.moveLightDown();
-			if(keysDown.contains('K'))
-				e.moveLightDown();
-			if(keysDown.contains(' '))
-				e.summonLight();
+			if(keysDown.contains('g')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightNorth();
+			}
+			if(keysDown.contains('G')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightNorth();
+			}
+			if(keysDown.contains('v')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightWest();
+			}				
+			if(keysDown.contains('V')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightWest();
+			}				
+			if(keysDown.contains('b')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightSouth();
+			}
+			if(keysDown.contains('B')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightSouth();
+			}
+			if(keysDown.contains('n')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightEast();
+			}
+			if(keysDown.contains('N')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightEast();
+			}
+			if(keysDown.contains('i')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightUp();
+			}
+			if(keysDown.contains('I')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightUp();
+			}
+			if(keysDown.contains('k')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightDown();
+			}
+			if(keysDown.contains('K')){
+				if(suncycle)
+					return;
+				else
+					e.moveLightDown();
+			}
+			if(keysDown.contains(' ')){
+				if(suncycle)
+					return;
+				else
+					e.summonLight();
+			}
 			if(keysDown.contains('t'))
 				e.teleport();
 			if(keysDown.contains('T'))
 				e.teleport();
 			if(keysDown.contains('p'))
 				paused = !paused;
+			if(keysDown.contains('P'))
+				paused = !paused;
+			if(keysDown.contains('u')){
+				if(suncycle)
+					return;
+				else{
+					suncycle = true;
+					t=0;
+					e.lightSource = new Point3D(-150,150,-0);
+					runSunCycle();
+				}
+			}
+			if(keysDown.contains('U')){
+				if(suncycle)
+					return;
+				else{
+					suncycle = true;
+					t = 0;
+					e.lightSource = new Point3D(-150,150,-0);
+					runSunCycle();
+				}
+			}
+			if(suncycle)
+				runSunCycle();
 			moveEnvironmentObjects();
 			repaint();
 		}
@@ -158,9 +239,34 @@ public class Arena extends JPanel implements KeyListener {
 			double cz = eo.center.z;
 			eo.center.x -= cy / factor;
 			eo.center.y += cx / factor;
+			for(int j = 0; j < eo.triangles.size(); j++){
+				eo.triangles.get(j).onFloor = eo.triangles.get(j).onFloor;
+			}
 		}
 	}
 
+	private void runSunCycle(){
+		while(t<150){
+			if(System.currentTimeMillis()%1000 == 0){
+				e.moveLightUp();
+				e.moveLightEast();
+				e.moveLightSouth();
+				t++;
+			}
+		}
+		while(t>148){
+			if(System.currentTimeMillis()%100 == 0){
+				e.moveLightDown();
+				e.moveLightEast();
+				e.moveLightSouth();
+				t++;
+			}
+			if(t ==300){
+				suncycle = false;
+				return;
+			}
+		}
+	}
 
 	/**
 	 * Creates a (random) environment 
