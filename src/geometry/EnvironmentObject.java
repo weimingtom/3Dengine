@@ -21,7 +21,7 @@ public class EnvironmentObject implements Comparable<EnvironmentObject>{
 	
 	public static EnvironmentObject makeCube(double side){
 		EnvironmentObject eo = new EnvironmentObject();
-		
+		double s = 0.0001;
 		double r = side/2;
 		Point3D p1 = new Point3D(-r, -r, -r); //bottom left, back
 		Point3D p2 = new Point3D(r, -r, -r); //bottom left, front
@@ -32,18 +32,41 @@ public class EnvironmentObject implements Comparable<EnvironmentObject>{
 		Point3D p7 = new Point3D(r, r, r); //top right, front
 		Point3D p8 = new Point3D(-r, r, r); //top right, back
 		
-		eo.triangles.add(new Triangle3D(p1, p4, p3, true));
-		eo.triangles.add(new Triangle3D(p1, p3, p2, true));
-		eo.triangles.add(new Triangle3D(p1, p2, p6, true));
-		eo.triangles.add(new Triangle3D(p1, p6, p5, true));
-		eo.triangles.add(new Triangle3D(p2, p3, p7, true));
-		eo.triangles.add(new Triangle3D(p2, p7, p6, true));
-		eo.triangles.add(new Triangle3D(p8, p5, p6, true));
-		eo.triangles.add(new Triangle3D(p8, p6, p7, true));
-		eo.triangles.add(new Triangle3D(p8, p7, p3, true));
-		eo.triangles.add(new Triangle3D(p8, p3, p4, true));
-		eo.triangles.add(new Triangle3D(p4, p1, p5, true));
-		eo.triangles.add(new Triangle3D(p4, p5, p8, true));
+		Point3D p11 = new Point3D(-r-s, -r-s, -r-s); //bottom left, back
+		Point3D p12 = new Point3D(r+s, -r-s, -r-s); //bottom left, front
+		Point3D p13 = new Point3D(r+s, r+s, -r-s); //bottom right, front
+		Point3D p14 = new Point3D(-r-s, r+s, -r-s); //bottom right, back
+		Point3D p15 = new Point3D(-r-s, -r-s, r+s); //top left, back
+		Point3D p16 = new Point3D(r+s, -r-s, r+s); //top left, front
+		Point3D p17 = new Point3D(r+s, r+s, r+s); //top right, front
+		Point3D p18 = new Point3D(-r-s, r+s, r+s); //top right, back
+		
+		eo.triangles.add(new Triangle3D(p1, p4, p3)); //bottom
+		eo.triangles.add(new Triangle3D(p1, p3, p2)); //bottom
+		eo.triangles.add(new Triangle3D(p1, p2, p6)); //left
+		eo.triangles.add(new Triangle3D(p1, p6, p5)); //left
+		eo.triangles.add(new Triangle3D(p2, p3, p7)); //front
+		eo.triangles.add(new Triangle3D(p2, p7, p6)); //front
+		eo.triangles.add(new Triangle3D(p8, p5, p6)); //top
+		eo.triangles.add(new Triangle3D(p8, p6, p7)); //top
+		eo.triangles.add(new Triangle3D(p8, p7, p3)); //right
+		eo.triangles.add(new Triangle3D(p8, p3, p4)); //right
+		eo.triangles.add(new Triangle3D(p4, p1, p5)); //back
+		eo.triangles.add(new Triangle3D(p4, p5, p8)); //back
+		
+		/*new Triangle3D(p11, p14, p13)
+		new Triangle3D(p11, p13, p12)
+		new Triangle3D(p11, p12, p16)
+		new Triangle3D(p11, p16, p15)
+		new Triangle3D(p12, p13, p17)
+		new Triangle3D(p12, p17, p16)
+		new Triangle3D(p18, p15, p16)
+		new Triangle3D(p18, p16, p17)
+		new Triangle3D(p18, p17, p13)
+		new Triangle3D(p18, p13, p14)
+		new Triangle3D(p14, p11, p15)
+		new Triangle3D(p14, p15, p18)*/
+		
 		return eo;
 	}
 	

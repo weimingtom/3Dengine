@@ -5,6 +5,7 @@ import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
@@ -145,6 +146,8 @@ public class Environment {
 		//            graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
 
 		// Draw the interiors of the triangles
+
+		
 		
 		if(!t.onFloor){
 			Point3D[] test = t.getHypotenuse();
@@ -153,11 +156,23 @@ public class Environment {
 			double a = midpoint.x-cameraPos[0];
 			double b = midpoint.y-cameraPos[1];
 			double c = midpoint.z-cameraPos[2];
-			double dist = 40*Math.sqrt((a*a) + (b*b) + (c*c));
-			double factor = dist/10; //factor to shrink/enlarge texture based on triangle's distance from camera.
-			TexturePaint texture = new TexturePaint(textureimg, 
+			double dist = Math.sqrt((a*a)+(b*b)+(c*c));
+			double factor;
+			
+			if(dist<1)
+				factor = 1000;
+			//else if (dist> 1000)
+				//factor = 1;
+			else
+				factor = 5000/Math.sqrt((a*a) + (b*b) + (c*c)); //factor to shrink/enlarge texture based on triangle's distance from camera.
+			
+			TexturePaint texture;
+			System.out.println(factor);
+		
+			texture = new TexturePaint(textureimg,
 					new Rectangle2D.Double(x[0], y[0],
 							factor, factor));
+			
 			graphics.setPaint(texture);
 			p.moveTo(x[0], y[0]);
 			p.lineTo(x[1], y[1]);
@@ -181,6 +196,9 @@ public class Environment {
 				Color C = Color.getHSBColor((float)(.47*.1), (float)(.75*.1),(float)(.9*.1));
 				graphics.setPaint(C);
 			}
+			//int alpha = Math.abs((int)(255-factor)) > 255 ? 255 : Math.abs((int)(255-factor));
+			//Color C = new Color(0,0,0,alpha);
+			//graphics.setPaint(C);
 			p.moveTo(x[0], y[0]);
 			p.lineTo(x[1], y[1]);
 			p.lineTo(x[2], y[2]);
@@ -328,7 +346,7 @@ public class Environment {
 	}
 
 	public void moveLightDown(){
-		if(lightSource.z > -7)
+		if(lightSource.z > -10)
 			lightSource = lightSource.translate(0, 0, -1);
 		else
 			return;
