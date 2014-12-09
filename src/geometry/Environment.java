@@ -31,13 +31,13 @@ public class Environment {
 	double[][] transform = {{1,0,0,0},{0,1,0,0},{0,0,1,0}, {0, 0, 0, 1}};
 	Rectangle r = new Rectangle(WIDTH,HEIGHT);
 
-	//Graphics2D graphics;     NOT USED            // The rendering context
+	Graphics2D graphics;     //NOT USED            // The rendering context
 
 	//buffered image for texturing
 	public BufferedImage loadTheImage(){
 		BufferedImage img = null;
 		try{
-			img = ImageIO.read(new File("C:/Users/KatherineMJB/Pictures/blackandwhite.jpg"));
+			img = ImageIO.read(new File("/home/kbeine/blackandwhite.jpg"));
 		}catch(IOException e){
 			System.err.print("Did not load texture");
 		}
@@ -141,9 +141,9 @@ public class Environment {
 		}
 
 		// Draw the outlines of the triangles
-		//        graphics.setColor(Color.black);
-		//        for(int i = 0; i < 3; i++)
-		//            graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
+		        graphics.setColor(Color.red);
+		        for(int i = 0; i < 3; i++)
+		            graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
 
 		// Draw the interiors of the triangles
 
@@ -163,20 +163,23 @@ public class Environment {
 			double factor;
 			double rwi = l.distance(tlc)+r.distance(tlc);
 			
-			/*if(dist<1)
+			double rhi = (pts[0].x - pts[1].x)*(pts[0].x - pts[1].x) + (pts[0].y-pts[1].y)*(pts[0].y-pts[1].y);
+			rhi = Math.sqrt(rhi);
+			
+			if(dist<1)
 				factor = 1000;
 			//else if (dist> 1000)
 				//factor = 1;
 			else
 				factor = 5000/Math.sqrt((a*a) + (b*b) + (c*c)); //factor to shrink/enlarge texture based on triangle's distance from camera.
-			*/
+			
 			
 			TexturePaint texture;
 			System.out.println(rwi);
 		
 			texture = new TexturePaint(textureimg,
 					new Rectangle2D.Double(x[0], y[0],
-							10/rwi, 10/rwi));
+							factor, factor));
 			
 			graphics.setPaint(texture);
 			p.moveTo(x[0], y[0]);
