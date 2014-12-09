@@ -43,7 +43,7 @@ public class Environment {
 		}
 		return img;
 	}
-	
+
 	/*Color color = Color.cyan;
 	IndexColorModel colorModel = new IndexColorModel(1, 2,
 			new byte[]{0, (byte) color.getRed()},
@@ -141,14 +141,14 @@ public class Environment {
 		}
 
 		// Draw the outlines of the triangles
-		        graphics.setColor(Color.red);
-		        for(int i = 0; i < 3; i++)
-		            graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
+		graphics.setColor(Color.red);
+		for(int i = 0; i < 3; i++)
+			graphics.drawLine((int)x[i], (int)y[i], (int)x[(i+1)%3], (int)y[(i+1)%3]);
 
 		// Draw the interiors of the triangles
 
-		
-		
+		float shade = shadeTriangle(lightSource,t);
+
 		if(!t.onFloor){
 			Point3D[] test = t.getHypotenuse();
 			Point3D midpoint = new Point3D(test[0].x/2+test[1].x/2, 
@@ -162,35 +162,41 @@ public class Environment {
 			Point3D r = test[1];
 			double factor;
 			double rwi = l.distance(tlc)+r.distance(tlc);
-			
+
 			double rhi = (pts[0].x - pts[1].x)*(pts[0].x - pts[1].x) + (pts[0].y-pts[1].y)*(pts[0].y-pts[1].y);
 			rhi = Math.sqrt(rhi);
-			
+
 			if(dist<1)
 				factor = 1000;
 			//else if (dist> 1000)
-				//factor = 1;
+			//factor = 1;
 			else
 				factor = 5000/Math.sqrt((a*a) + (b*b) + (c*c)); //factor to shrink/enlarge texture based on triangle's distance from camera.
-			
-			
+
+
 			TexturePaint texture;
 			System.out.println(rwi);
-		
+
 			texture = new TexturePaint(textureimg,
 					new Rectangle2D.Double(x[0], y[0],
 							factor, factor));
-			
+
 			graphics.setPaint(texture);
 			p.moveTo(x[0], y[0]);
 			p.lineTo(x[1], y[1]);
 			p.lineTo(x[2], y[2]);
 			p.closePath();
 			graphics.fill(p);
-			
+
+			if(shade<=1&&shade>=0)
+				shade = shade;
+			else
+				shade=0.1F;
+			graphics.setPaint(new Color(0.F,0.F,0.F,1-shade));
+			graphics.fill(p);
+
 		} else{
 
-			double shade = shadeTriangle(lightSource,t);
 			// applies a shade to the current triangle based on the angle of the vectors. 
 			// maybe call the color a different way to get a larger variety of colors, instead of 255.
 			if(shade<=1&&shade>=0){
@@ -199,7 +205,7 @@ public class Environment {
 				graphics.setPaint(C);
 			}
 			else{  
-				shade=0.1;
+				shade=0.1F;
 
 				Color C = Color.getHSBColor((float)(.47*.1), (float)(.75*.1),(float)(.9*.1));
 				graphics.setPaint(C);
@@ -215,7 +221,7 @@ public class Environment {
 		}
 	}
 
-	private double shadeTriangle(Point3D lightSource, Triangle3D face){
+	private float shadeTriangle(Point3D lightSource, Triangle3D face){
 		/* need a vector from light to center of the face of the object
 		 * need normal vector from surface
 		 * normalize the vectors
@@ -241,7 +247,7 @@ public class Environment {
 		lv = normalizeVect(lv);
 
 		double cosTheta = dotProduct(lv,norm);
-		return cosTheta;
+		return (float)cosTheta;
 	}
 
 	private Point3D vectorCross(Point3D A, Point3D B){
@@ -251,18 +257,18 @@ public class Environment {
 		Point3D norm = new Point3D(x,y,z);
 		return norm;
 	}
-	
+
 	private Point3D normalizeVect(Point3D v){
 		double mag = Math.sqrt(v.x*v.x+v.y*v.y+v.z*v.z);
 		Point3D rv = new Point3D(v.x/mag,v.y/mag,v.z/mag);
 		return rv;
 	}
-	
+
 	private double dotProduct(Point3D a,Point3D b){
 		double rv = a.x*b.x+a.y*b.y+a.z*b.z;
 		return rv;
 	}
-	
+
 	private void renderObject(EnvironmentObject o, Graphics2D graphics){
 		DSArrayList<Triangle3D> objectTriangles = o.getTriangles();
 		for(int ti = 0; ti < objectTriangles.size(); ti++)
@@ -363,7 +369,7 @@ public class Environment {
 	public void summonLight(){
 		lightSource = new Point3D(cameraPos[0],cameraPos[1],cameraPos[2]);
 	}
-	
+
 	public void moveLight(Point3D pts){
 		lightSource = pts;
 	}

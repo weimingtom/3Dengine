@@ -22,7 +22,7 @@ public class EnvironmentObject implements Comparable<EnvironmentObject>{
 	
 	public static EnvironmentObject makeCube(double side){
 		EnvironmentObject eo = new EnvironmentObject();
-		double s = 0.10;
+		//double s = 0.10;
 		double r = side/2;
 		Point3D p1 = new Point3D(-r, -r, -r); //bottom left, back
 		Point3D p2 = new Point3D(r, -r, -r); //bottom left, front
@@ -33,14 +33,14 @@ public class EnvironmentObject implements Comparable<EnvironmentObject>{
 		Point3D p7 = new Point3D(r, r, r); //top right, front
 		Point3D p8 = new Point3D(-r, r, r); //top right, back
 		
-		Point3D p11 = new Point3D(-r-s, -r-s, -r-s); //bottom left, back
+		/*Point3D p11 = new Point3D(-r-s, -r-s, -r-s); //bottom left, back
 		Point3D p12 = new Point3D(r+s, -r-s, -r-s); //bottom left, front
 		Point3D p13 = new Point3D(r+s, r+s, -r-s); //bottom right, front
 		Point3D p14 = new Point3D(-r-s, r+s, -r-s); //bottom right, back
 		Point3D p15 = new Point3D(-r-s, -r-s, r+s); //top left, back
 		Point3D p16 = new Point3D(r+s, -r-s, r+s); //top left, front
 		Point3D p17 = new Point3D(r+s, r+s, r+s); //top right, front
-		Point3D p18 = new Point3D(-r-s, r+s, r+s); //top right, back
+		Point3D p18 = new Point3D(-r-s, r+s, r+s); //top right, back*/
 		
 		eo.triangles.add(new Triangle3D(p1, p4, p3)); //bottom
 		eo.triangles.add(new Triangle3D(p1, p3, p2)); //bottom
@@ -55,7 +55,7 @@ public class EnvironmentObject implements Comparable<EnvironmentObject>{
 		eo.triangles.add(new Triangle3D(p4, p1, p5)); //back
 		eo.triangles.add(new Triangle3D(p4, p5, p8)); //back
 		
-		eo.triangles.add(new Triangle3D(p11, p14, p13, true));
+		/*eo.triangles.add(new Triangle3D(p11, p14, p13, true));
 		eo.triangles.add(new Triangle3D(p11, p13, p12, true));
 		eo.triangles.add(new Triangle3D(p11, p12, p16, true));
 		eo.triangles.add(new Triangle3D(p11, p16, p15, true));
@@ -66,7 +66,7 @@ public class EnvironmentObject implements Comparable<EnvironmentObject>{
 		eo.triangles.add(new Triangle3D(p18, p17, p13, true));
 		eo.triangles.add(new Triangle3D(p18, p13, p14, true));
 		eo.triangles.add(new Triangle3D(p14, p11, p15, true));
-		eo.triangles.add(new Triangle3D(p14, p15, p18, true));
+		eo.triangles.add(new Triangle3D(p14, p15, p18, true));*/
 		
 		return eo;
 	}
